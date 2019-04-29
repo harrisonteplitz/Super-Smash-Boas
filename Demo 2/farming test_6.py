@@ -80,6 +80,12 @@ while running:
         column = main_char_rect.centerx // (margin + rect_width)
         row = main_char_rect.centery // (margin + rect_height)
         grid[row][column] = 1
+    
+    if key_in[pygame.K_z]:
+        column = main_char_rect.centerx // (margin + rect_width)
+        row = main_char_rect.centery // (margin + rect_height)
+        grid[row][column] = 2
+        
     if event.type == pygame.KEYUP:
         pressed = 0   
         
@@ -88,6 +94,8 @@ while running:
             color = 100,42,42
             if grid[row][column] == 1:
                 color = 0,255,100
+            if grid[row][column] == 2:
+                color = 135,206,250
             pygame.draw.rect(screen, color, [(margin + rect_width) * column + margin,
                               (margin + rect_height) * row + margin,
                               rect_width,
