@@ -23,8 +23,18 @@ main_char = pygame.transform.scale(main_char, (50, 50))
 main_char_rect = main_char.get_rect()
 main_char_rect.centerx = margin + (rect_width/2)
 main_char_rect.centery = margin + (rect_height/2)
+score = 0 #initial score
+
 pressed = 0
 grid = []
+
+
+# Clock initialization
+clock = pygame.time.Clock()
+font = pygame.font.Font(None, 25)
+frame_count = 0
+frame_rate = 60
+start_time = 90
 
 for row in range(num):
     grid.append([])
@@ -35,7 +45,7 @@ for row in range(num):
 while running:
     screen.fill(backgroundColor)
     key_in = pygame.key.get_pressed()
-    
+
     if key_in[pygame.K_ESCAPE]:
         print("Quitting!")
         pygame.quit()
@@ -80,22 +90,14 @@ while running:
         column = main_char_rect.centerx // (margin + rect_width)
         row = main_char_rect.centery // (margin + rect_height)
         grid[row][column] = 1
-    
-    if key_in[pygame.K_z]:
-        column = main_char_rect.centerx // (margin + rect_width)
-        row = main_char_rect.centery // (margin + rect_height)
-        grid[row][column] = 2
-        
     if event.type == pygame.KEYUP:
         pressed = 0   
         
     for row in range(num):
         for column in range(num):
-            color = 100,42,42
+            color = 139,69,19 #"saddlebrown
             if grid[row][column] == 1:
                 color = 0,255,100
-            if grid[row][column] == 2:
-                color = 135,206,250
             pygame.draw.rect(screen, color, [(margin + rect_width) * column + margin,
                               (margin + rect_height) * row + margin,
                               rect_width,
@@ -103,5 +105,30 @@ while running:
             tile_coords.update({(row,column):((margin + rect_width) * column + margin,
                               (margin + rect_height) * row + margin)})#update dictionary of tile positions
     screen.blit(main_char, main_char_rect)
+#Clock printed to screen
+    total_seconds = start_time - (frame_count // frame_rate)
+    if total_seconds < 0:
+        total_seconds = 0
+ 
+    # Divide by 60 to get total minutes
+    minutes = total_seconds // 60
+ 
+    # Use modulus (remainder) to get seconds
+    seconds = total_seconds % 60
+ 
+    # Use python string formatting to format in leading zeros
+    output_string = "Time left: {0:02}:{1:02} | Score: ".format(minutes, seconds) #need to add score variable in this string
+ 
+    # Blit to the screen
+    text = font.render(output_string, True, (0,0,0))
+ 
+    screen.blit(text, [150, 380])
+ 
+    # ALL CODE TO DRAW SHOULD GO ABOVE THIS COMMENT
+    frame_count += 1
+ 
+    # Limit frames per second
+    clock.tick(frame_rate)
+
     pygame.display.update()
     
