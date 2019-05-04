@@ -27,7 +27,7 @@ font_in_game = pygame.font.Font(None, 25)
 font_end_game = pygame.font.Font(None, 40)
 frame_count = 0
 frame_rate = 60
-start_time = 20 #small for sake of testing
+start_time = 30 #small for sake of testing
 
 for row in range(num):
     grid.append([])
@@ -53,7 +53,9 @@ while running:
 
     column = main_char_rect.centerx // (margin + rect_width)
     row = main_char_rect.centery // (margin + rect_height)
-    if key_in[pygame.K_RIGHT] and sum(key_in) == 1 and pressed == 0:
+
+#Character movement
+    if key_in[pygame.K_d] and sum(key_in) == 1 and pressed == 0:
         pressed = 1
         # print(left_count)
         main_char_rect.centerx = main_char_rect.centerx + margin + rect_width
@@ -61,7 +63,7 @@ while running:
         if main_char_rect.right > width:
             main_char_rect.centerx = main_char_rect.centerx - margin - rect_width
 
-    if key_in[pygame.K_LEFT] and sum(key_in) == 1 and pressed == 0:
+    if key_in[pygame.K_a] and sum(key_in) == 1 and pressed == 0:
         pressed = 1
         # print(left_count)
         main_char_rect.centerx = main_char_rect.centerx - margin - rect_width
@@ -69,7 +71,7 @@ while running:
         if main_char_rect.left < margin:
             main_char_rect.centerx = main_char_rect.centerx + margin + rect_width
 
-    if key_in[pygame.K_DOWN] and sum(key_in) == 1 and pressed == 0:
+    if key_in[pygame.K_s] and sum(key_in) == 1 and pressed == 0:
         pressed = 1
         # print(left_count)
         main_char_rect.centery = main_char_rect.centery + margin + rect_height
@@ -77,20 +79,35 @@ while running:
         if main_char_rect.bottom > height - margin:
             main_char_rect.centery = main_char_rect.centery - margin - rect_height
 
-    if key_in[pygame.K_UP] and sum(key_in) == 1 and pressed == 0:
+    if key_in[pygame.K_w] and sum(key_in) == 1 and pressed == 0:
         pressed = 1
         # print(left_count)
         main_char_rect.centery = main_char_rect.centery - margin - rect_height
 
         if main_char_rect.top < margin:
             main_char_rect.centery = main_char_rect.centery + margin + rect_height
-    if key_in[pygame.K_SPACE]:
+
+#planting different veggies
+    if key_in[pygame.K_p]: #peas
 
         grid[row][column] = 1
         if timestamp[row][column] is not None:
             timestamp[row][column] = pygame.time.get_ticks() / 1000
 
-    if key_in[pygame.K_h] and grid[row][column] == 2:
+    if key_in[pygame.K_c]: #corn
+
+        grid[row][column] = 4
+        if timestamp[row][column] is not None:
+            timestamp[row][column] = pygame.time.get_ticks() / 1000
+
+    if key_in[pygame.K_t]: #tomatoes
+
+        grid[row][column] = 5
+        if timestamp[row][column] is not None:
+            timestamp[row][column] = pygame.time.get_ticks() / 1000
+
+#harvesting veggies
+    if key_in[pygame.K_SPACE] and grid[row][column] == 2:
 
         timestamp[row][column] = []
         grid[row][column] = 3
@@ -111,12 +128,20 @@ while running:
             if grid[row][column] == 3:
                 color = 100, 42, 42
             if grid[row][column] == 1:
-                color = 0, 255, 100
+                color = 0, 255, 100 #green: peas
+            if grid[row][column] == 4:
+                color = 255, 255, 102 #yellow: corn
+            if grid[row][column] == 5:
+                color = 255, 99, 71 #red: tomatoes
             if timestamp[row][column]:
-                if pygame.time.get_ticks()/1000 - timestamp[row][column] >= 5:
+                if 5 <= (pygame.time.get_ticks()/1000 - timestamp[row][column]) < 10:
                     grid[row][column] = 2
+                elif (pygame.time.get_ticks()/1000 - timestamp[row][column]) >= 10:
+                    grid[row][column] = 3
+                    score-=1
+                    timestamp[row][column] = []
             if grid[row][column] == 2:
-                color = 135, 206, 250
+                color = 135, 206, 250 #blue ready to harvest
             pygame.draw.rect(screen, color, [(margin + rect_width) * column + margin,
                                              (margin + rect_height) * row + margin,
                                              rect_width,
