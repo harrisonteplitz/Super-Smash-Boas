@@ -20,6 +20,8 @@ pressed = 0
 grid = []
 timestamp = []
 score = 0
+Crops = ['Peas', 'Carrots', 'Tomatoes']
+special_crop = 0 #just an initialization which will be replaced with the real value quickly
 
 # Clock initialization
 clock = pygame.time.Clock()
@@ -28,13 +30,17 @@ font_end_game = pygame.font.Font(None, 40)
 frame_count = 0
 frame_rate = 60
 start_time = 30 #small for sake of testing
+minutes = 0
+seconds = 0 #initialize for crop demand process
+timestamp_crop_demand = 10
 
 for row in range(num):
     grid.append([])
     timestamp.append([])
     for column in range(num):
-        grid[row].append(0)
+        grid[row].append([0,0])
         timestamp[row].append([])
+
 # main loop
 while running:
     screen.fill(backgroundColor)
@@ -90,27 +96,28 @@ while running:
 #planting different veggies
     if key_in[pygame.K_p]: #peas
 
-        grid[row][column] = 1
+        grid[row][column] = [1,1]
         if timestamp[row][column] is not None:
             timestamp[row][column] = pygame.time.get_ticks() / 1000
 
-    if key_in[pygame.K_c]: #corn
+    if key_in[pygame.K_c]: #carrots
 
-        grid[row][column] = 4
+        grid[row][column] = [2,1]
         if timestamp[row][column] is not None:
             timestamp[row][column] = pygame.time.get_ticks() / 1000
 
     if key_in[pygame.K_t]: #tomatoes
 
-        grid[row][column] = 5
+        grid[row][column] = [3,1]
         if timestamp[row][column] is not None:
             timestamp[row][column] = pygame.time.get_ticks() / 1000
 
 #harvesting veggies
-    if key_in[pygame.K_SPACE] and grid[row][column] == 2:
-
+    if key_in[pygame.K_SPACE] and grid[row][column][1] == 2:
+        if grid[row][column][0] == special_crop:
+            score += 1 #receive a bonus point for harvesting the crop in demand
         timestamp[row][column] = []
-        grid[row][column] = 3
+        grid[row][column][1] = 0
         score += 1
 
 
@@ -124,24 +131,24 @@ while running:
 
     for row in range(num):
         for column in range(num):
-            color = 100, 42, 42
-            if grid[row][column] == 3:
-                color = 100, 42, 42
-            if grid[row][column] == 1:
+            color = 100, 42, 42 #catch all is dirt
+            if grid[row][column][1] == 0:
+                color = 100, 42, 42 #dirt
+            if grid[row][column] == [1,1]:
                 color = 0, 255, 100 #green: peas
-            if grid[row][column] == 4:
-                color = 255, 255, 102 #yellow: corn
-            if grid[row][column] == 5:
+            if grid[row][column] == [2,1]:
+                color = 255, 165, 0 #orange: carrots
+            if grid[row][column] == [3,1]:
                 color = 255, 99, 71 #red: tomatoes
             if timestamp[row][column]:
                 if 5 <= (pygame.time.get_ticks()/1000 - timestamp[row][column]) < 10:
-                    grid[row][column] = 2
+                    grid[row][column][1] = 2
                 elif (pygame.time.get_ticks()/1000 - timestamp[row][column]) >= 10:
-                    grid[row][column] = 3
+                    grid[row][column][1] = 0
                     score-=1
                     timestamp[row][column] = []
-            if grid[row][column] == 2:
-                color = 135, 206, 250 #blue ready to harvest
+            if grid[row][column][1] == 2:
+                color = 135, 206, 250 #blue: ready to harvest
             pygame.draw.rect(screen, color, [(margin + rect_width) * column + margin,
                                              (margin + rect_height) * row + margin,
                                              rect_width,
@@ -150,7 +157,22 @@ while running:
                                                 (
                                                             margin + rect_height) * row + margin)})  # update dictionary of tile positions
     screen.blit(main_char, main_char_rect)
-    
+
+#Demand for crop
+    if timestamp_crop_demand % 10 == 0:
+        random_crop = random.choice(Crops) #selects a new crop every 10 seconds
+        timestamp_crop_demand = []
+        if random_crop == "Peas":
+            special_crop = 1 
+        if random_crop == "Carrots":
+            special_crop = 2  
+        if random_crop == "Tomatoes":
+            special_crop = 3           
+    crop_demand = random_crop + " are in season! [x2]"
+    text_crop = font_in_game.render(crop_demand, True, (250, 250, 250))
+    screen.blit(text_crop, [150, 20]) 
+    timestamp_crop_demand = 60*minutes+seconds
+ 
 # Clock printed to screen
     total_seconds = start_time - (frame_count // frame_rate)
     if total_seconds < 0:
