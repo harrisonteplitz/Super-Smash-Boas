@@ -4,7 +4,7 @@ pygame.init()
 
 backgroundColor = 0, 255, 50
 running = True
-start = False
+start = True
 margin = 2
 rect_width = 50
 rect_height = 50
@@ -47,15 +47,25 @@ for row in range(num):
         timestamp[row].append([])
 
 #start screen
-while running:
+while start:
     key_in = pygame.key.get_pressed()
     screen.blit(start_screen, (0,0))
+    
+    if key_in[pygame.K_ESCAPE]:
+        pygame.quit()
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            print("Quitting!")
+            print("Score: {}".format(score))
+            pygame.quit()
+            
     if key_in[pygame.K_RETURN]:
-        running = False
+        start = False
     pygame.display.update()
 
 # main loop
-'''while running:
+while running:
     screen.fill(backgroundColor)
     key_in = pygame.key.get_pressed()
  
@@ -221,4 +231,3 @@ while running:
         text = font_end_game.render(output_string, True, (250, 250, 250))
         screen.blit(text, [50, 200])
         pygame.display.update()
-'''
