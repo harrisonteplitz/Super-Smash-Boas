@@ -56,8 +56,6 @@ while start:
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            print("Quitting!")
-            print("Score: {}".format(score))
             pygame.quit()
             
     if key_in[pygame.K_RETURN]:
@@ -230,4 +228,9 @@ while running:
         output_string = "Game Over! | Score: {}".format(score)  
         text = font_end_game.render(output_string, True, (250, 250, 250))
         screen.blit(text, [50, 200])
+        if key_in[pygame.K_ESCAPE]:
+            pygame.quit()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
         pygame.display.update()
