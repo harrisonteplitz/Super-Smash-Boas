@@ -178,7 +178,7 @@ while running:
     screen.blit(main_char, main_char_rect)
 
 #Demand for crop
-    if (start_time - math.floor(pygame.time.get_ticks()/1000)) % 10 == 0 or frame_count == 0:
+    if (start_time - pygame.time.get_ticks()//1000) % 10 == 0 or frame_count == 0:
         random_crop = random.choice(Crops) #selects a new crop every 10 seconds
         crop_demand = "Gathering Information from Market..."
         text_crop = font_in_game.render(crop_demand, True, (250, 250, 250))
@@ -191,7 +191,7 @@ while running:
             special_crop = 3
         if random_crop == "4. Potatoes":
             special_crop = 4
-    if (start_time - math.floor(pygame.time.get_ticks()/1000)) % 10 != 0:
+    if (start_time - pygame.time.get_ticks()//1000) % 10 != 0:
         crop_demand = random_crop + " are in season! [x2]"
         text_crop = font_in_game.render(crop_demand, True, (250, 250, 250))
         screen.blit(text_crop, [150, 20]) 
@@ -208,12 +208,13 @@ while running:
     seconds = total_seconds % 60
 
     # Use python string formatting to format in leading zeros
-    output_string = "Time left: {} | Score: {}".format((start_time - math.floor(pygame.time.get_ticks()/1000)), score) 
+    time_left = start_time - pygame.time.get_ticks()//1000
+    output_string = "Time left: {} | Score: {}".format(time_left, score) 
 
     # Blit to the screen
     text = font_in_game.render(output_string, True, (250, 250, 250))
 
-    screen.blit(text, [150, 380])
+    screen.blit(text, [160, 480])
 
     # ALL CODE TO DRAW SHOULD GO ABOVE THIS COMMENT
     frame_count += 1
@@ -228,7 +229,7 @@ while running:
         screen.fill((0,0,0))
         output_string = "Game Over! | Score: {}".format(score)  
         text = font_end_game.render(output_string, True, (250, 250, 250))
-        screen.blit(text, [50, 200])
+        screen.blit(text, [70, 270])
         if key_in[pygame.K_ESCAPE]:
             pygame.quit()
         for event in pygame.event.get():
