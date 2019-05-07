@@ -1,4 +1,4 @@
-import pygame, random
+import pygame, random, math
 
 pygame.init()
 
@@ -21,7 +21,7 @@ pressed = 0
 grid = []
 timestamp = []
 score = 0
-Crops = ['1.Peas', '2.Carrots', '3.Tomatoes', '4. Potato']
+Crops = ['1. Peas', '2. Carrots', '3. Tomatoes', '4. Potatoes'] 
 special_crop = 0 #just an initialization which will be replaced with the real value quickly
 
 
@@ -35,8 +35,7 @@ font_end_game = pygame.font.Font(None, 40)
 frame_count = 0
 frame_rate = 60
 start_time = 30 #small for sake of testing
-minutes = 0
-seconds = 0 #initialize for crop demand process
+total_seconds = 0 #initialize for crop demand process
 timestamp_crop_demand = 10
 
 for row in range(num):
@@ -179,21 +178,23 @@ while running:
     screen.blit(main_char, main_char_rect)
 
 #Demand for crop
-    if timestamp_crop_demand % 10 == 0:
+    if (start_time - math.floor(pygame.time.get_ticks()/1000)) % 10 == 0 or frame_count == 0:
         random_crop = random.choice(Crops) #selects a new crop every 10 seconds
-        timestamp_crop_demand = []
-        if random_crop == "1.Peas":
+        crop_demand = "Gathering Information from Market..."
+        text_crop = font_in_game.render(crop_demand, True, (250, 250, 250))
+        screen.blit(text_crop, [150, 20]) 
+        if random_crop == "1. Peas":
             special_crop = 1 
-        if random_crop == "2.Carrots":
+        if random_crop == "2. Carrots":
             special_crop = 2  
-        if random_crop == "3.Tomatoes":
+        if random_crop == "3. Tomatoes":
             special_crop = 3
-        if random_crop == "4.Potatoes":
+        if random_crop == "4. Potatoes":
             special_crop = 4
-    crop_demand = random_crop + " are in season! [x2]"
-    text_crop = font_in_game.render(crop_demand, True, (250, 250, 250))
-    screen.blit(text_crop, [150, 20]) 
-    timestamp_crop_demand = 60*minutes+seconds
+    if (start_time - math.floor(pygame.time.get_ticks()/1000)) % 10 != 0:
+        crop_demand = random_crop + " are in season! [x2]"
+        text_crop = font_in_game.render(crop_demand, True, (250, 250, 250))
+        screen.blit(text_crop, [150, 20]) 
  
 # Clock printed to screen
     total_seconds = start_time - (frame_count // frame_rate)
@@ -207,10 +208,10 @@ while running:
     seconds = total_seconds % 60
 
     # Use python string formatting to format in leading zeros
-    output_string = "Time left: {}:{} | Score: {}".format(minutes, seconds, score)  # need to add score variable in this string
+    output_string = "Time left: {} | Score: {}".format((start_time - math.floor(pygame.time.get_ticks()/1000)), score) 
 
     # Blit to the screen
-    text = font_in_game.render(output_string, True, (0, 0, 0))
+    text = font_in_game.render(output_string, True, (250, 250, 250))
 
     screen.blit(text, [150, 380])
 
