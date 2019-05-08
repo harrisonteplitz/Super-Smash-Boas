@@ -23,6 +23,8 @@ timestamp = []
 score = 0
 Crops = ['1. Peas', '2. Carrots', '3. Tomatoes', '4. Potatoes'] 
 special_crop = 0 #just an initialization which will be replaced with the real value quickly
+start_time = 30
+frame_count = 0
 #crop sprites
 dirt_sprite = pygame.image.load('dirt.jpeg')
 potato_sprite = pygame.image.load('potato.png')
@@ -38,11 +40,6 @@ font_start_game = pygame.font.Font(None, 40)
 font_in_game = pygame.font.Font(None, 25)
 font_end_game = pygame.font.Font(None, 40)
 
-#frames and timing
-frame_count = 0
-frame_rate = 60
-start_time = 30 #small for sake of testing
-total_seconds = 0 #initialize for crop demand process
 timestamp_crop_demand = 10
 
 for row in range(num):
@@ -200,17 +197,6 @@ while running:
         crop_demand = random_crop + " are in season! [x2]"
         text_crop = font_in_game.render(crop_demand, True, (250, 250, 250))
         screen.blit(text_crop, [150, 20]) 
- 
-# Clock printed to screen
-    total_seconds = start_time - (frame_count // frame_rate)
-    if total_seconds < 0:
-        total_seconds = 0
-
-    # Divide by 60 to get total minutes
-    minutes = total_seconds // 60
-
-    # Use modulus (remainder) to get seconds
-    seconds = total_seconds % 60
 
     # Use python string formatting to format in leading zeros
     time_left = start_time - pygame.time.get_ticks()//1000
@@ -224,12 +210,10 @@ while running:
     # ALL CODE TO DRAW SHOULD GO ABOVE THIS COMMENT
     frame_count += 1
 
-    # Limit frames per second
-    clock.tick(frame_rate)
        
     pygame.display.update()
 
-    while (minutes == 0 and seconds == 0):
+    while time_left <= 0:
         running == False
         screen.fill((0,0,0))
         output_string = "Game Over! | Score: {}".format(score)  
