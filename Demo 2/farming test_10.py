@@ -17,7 +17,10 @@ main_char = pygame.transform.scale(main_char, (45, 45)) #smaller than the actual
 main_char_rect = main_char.get_rect()
 main_char_rect.centerx = margin + (rect_width / 2)
 main_char_rect.centery = margin + (rect_height / 2)
-pressed = 0
+pressed_a = 0
+pressed_d = 0
+pressed_s = 0
+pressed_w = 0
 grid = []
 timestamp = []
 score = 0
@@ -85,32 +88,32 @@ while running:
     row = main_char_rect.centery // (margin + rect_height)
 
 #Character movement
-    if key_in[pygame.K_d] and sum(key_in) == 1 and pressed == 0:
-        pressed = 1
+    if key_in[pygame.K_d] and pressed_d == 0:
+        pressed_d = 1
         # print(left_count)
         main_char_rect.centerx = main_char_rect.centerx + margin + rect_width
 
         if main_char_rect.right > width:
             main_char_rect.centerx = main_char_rect.centerx - margin - rect_width
 
-    if key_in[pygame.K_a] and sum(key_in) == 1 and pressed == 0:
-        pressed = 1
+    if key_in[pygame.K_a] and pressed_a == 0:
+        pressed_a = 1
         # print(left_count)
         main_char_rect.centerx = main_char_rect.centerx - margin - rect_width
 
         if main_char_rect.left < margin:
             main_char_rect.centerx = main_char_rect.centerx + margin + rect_width
 
-    if key_in[pygame.K_s] and sum(key_in) == 1 and pressed == 0:
-        pressed = 1
+    if key_in[pygame.K_s] and pressed_s == 0:
+        pressed_s = 1
         # print(left_count)
         main_char_rect.centery = main_char_rect.centery + margin + rect_height
 
         if main_char_rect.bottom > height - margin:
             main_char_rect.centery = main_char_rect.centery - margin - rect_height
 
-    if key_in[pygame.K_w] and sum(key_in) == 1 and pressed == 0:
-        pressed = 1
+    if key_in[pygame.K_w]  and pressed_w == 0:
+        pressed_w = 1
         # print(left_count)
         main_char_rect.centery = main_char_rect.centery - margin - rect_height
 
@@ -151,7 +154,14 @@ while running:
         score += 1
 
     if event.type == pygame.KEYUP:
-        pressed = 0
+        if event.key == pygame.K_w:
+            pressed_w = 0
+        elif event.key == pygame.K_a:
+            pressed_a = 0
+        elif event.key == pygame.K_s:
+            pressed_s = 0
+        elif event.key == pygame.K_d:
+            pressed_d = 0
 
     for row in range(num):
         for column in range(num):
