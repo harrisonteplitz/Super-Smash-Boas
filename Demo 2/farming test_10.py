@@ -1,8 +1,8 @@
-import pygame, random, math
+import pygame, random
 
 pygame.init()
 
-backgroundColor = 0, 255, 50
+backgroundColor = 100, 42, 42 #background = brown
 running = True
 start = True
 margin = 2
@@ -28,22 +28,21 @@ Crops = ['1. Peas', '2. Carrots', '3. Tomatoes', '4. Potatoes']
 special_crop = 0 #just an initialization which will be replaced with the real value quickly
 start_time = 30
 frame_count = 0
+
 #crop sprites
-dirt_sprite = pygame.image.load('dirt.jpeg')
+dirt_sprite = pygame.image.load('Dirt.jpeg')
 potato_sprite = pygame.image.load('potato.png')
 tomato_sprite = pygame.image.load('tomato.png')
 carrot_sprite = pygame.image.load('carrot.png')
 peas_sprite = pygame.image.load('peas.png')
 harvest_sprite = pygame.image.load('harvest.png')
 
-
 clock = pygame.time.Clock()# Clock initialization
+
 #fonts
 font_start_game = pygame.font.Font(None, 40)
 font_in_game = pygame.font.Font(None, 25)
 font_end_game = pygame.font.Font(None, 40)
-
-timestamp_crop_demand = 10
 
 for row in range(num):
     block_type.append([])
@@ -172,13 +171,13 @@ while running:
             if block_type[row][column][1] == 0:
                 curr_sprite = dirt_sprite #dirt
             if block_type[row][column] == [1,1]:
-                curr_sprite = peas_sprite #green: peas
+                curr_sprite = peas_sprite #peas
             if block_type[row][column] == [2,1]:
-                curr_sprite = carrot_sprite #orange: carrots
+                curr_sprite = carrot_sprite #carrots
             if block_type[row][column] == [3,1]:
-                curr_sprite = tomato_sprite #red: tomatoes
+                curr_sprite = tomato_sprite #tomatoes
             if block_type[row][column] == [4,1]:
-                curr_sprite = potato_sprite #light brown: potatoes
+                curr_sprite = potato_sprite #potatoes
             if timestamp[row][column]:
                 if 5 <= (pygame.time.get_ticks()/1000 - timestamp[row][column]) < 10:
                     block_type[row][column][1] = 2
@@ -187,7 +186,7 @@ while running:
                     score-=1
                     timestamp[row][column] = []
             if block_type[row][column][1] == 2:
-                curr_sprite = harvest_sprite #blue: ready to harvest
+                curr_sprite = harvest_sprite #ready to harvest
 
             screen.blit(curr_sprite, [(margin + rect_width) * column + margin,
                                              (margin + rect_height) * row + margin])
@@ -214,19 +213,14 @@ while running:
         text_crop = font_in_game.render(crop_demand, True, (250, 250, 250))
         screen.blit(text_crop, [150, 20]) 
 
-    # Use python string formatting to format in leading zeros
+    # Clock Display
     time_left = start_time + start_timestamp - pygame.time.get_ticks()//1000
     output_string = "Time left: {} | Score: {}".format(time_left, score) 
-
-    # Blit to the screen
     text = font_in_game.render(output_string, True, (250, 250, 250))
-
     screen.blit(text, [160, 480])
 
     # ALL CODE TO DRAW SHOULD GO ABOVE THIS COMMENT
-    frame_count += 1
-
-       
+    frame_count += 1  
     pygame.display.update()
 
     while time_left <= 0:
