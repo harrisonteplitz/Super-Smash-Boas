@@ -21,7 +21,7 @@ pressed_a = 0
 pressed_d = 0
 pressed_s = 0
 pressed_w = 0
-grid = []
+block_type = []
 timestamp = []
 score = 0
 Crops = ['1. Peas', '2. Carrots', '3. Tomatoes', '4. Potatoes'] 
@@ -46,16 +46,17 @@ font_end_game = pygame.font.Font(None, 40)
 timestamp_crop_demand = 10
 
 for row in range(num):
-    grid.append([])
+    block_type.append([])
     timestamp.append([])
     for column in range(num):
-        grid[row].append([0,0])
+        block_type[row].append([0,0])
         timestamp[row].append([])
 
 #start screen
 while start:
     key_in = pygame.key.get_pressed()
     screen.blit(start_screen, (0,0))
+
     
     if key_in[pygame.K_ESCAPE]:
         pygame.quit()
@@ -66,6 +67,7 @@ while start:
             
     if key_in[pygame.K_RETURN]:
         start = False
+        start_timestamp = pygame.time.get_ticks()//1000
     pygame.display.update()
 
 # main loop
@@ -120,37 +122,38 @@ while running:
         if main_char_rect.top < margin:
             main_char_rect.centery = main_char_rect.centery + margin + rect_height
 
-#planting different veggies
+#block_typeing different veggies
     if key_in[pygame.K_k]: #peas
 
-        grid[row][column] = [1,1]
+        block_type[row][column] = [1,1]
         if timestamp[row][column] is not None:
             timestamp[row][column] = pygame.time.get_ticks() / 1000
 
     if key_in[pygame.K_l]: #carrots
 
-        grid[row][column] = [2,1]
+        block_type[row][column] = [2,1]
         if timestamp[row][column] is not None:
             timestamp[row][column] = pygame.time.get_ticks() / 1000
 
     if key_in[pygame.K_SEMICOLON]: #tomatoes
 
-        grid[row][column] = [3,1]
+        block_type[row][column] = [3,1]
         if timestamp[row][column] is not None:
             timestamp[row][column] = pygame.time.get_ticks() / 1000
     
     if key_in[pygame.K_QUOTE]: #potatoes
 
-        grid[row][column] = [4,1]
+        block_type[row][column] = [4,1]
         if timestamp[row][column] is not None:
             timestamp[row][column] = pygame.time.get_ticks() / 1000
 
 #harvesting veggies
-    if key_in[pygame.K_SPACE] and grid[row][column][1] == 2:
-        if grid[row][column][0] == special_crop:
+
+    if key_in[pygame.K_SPACE] and block_type[row][column][1] == 2:
+        if block_type[row][column][0] == special_crop:
             score += 1 #receive a bonus point for harvesting the crop in demand
         timestamp[row][column] = []
-        grid[row][column][1] = 0
+        block_type[row][column][1] = 0
         score += 1
 
     if event.type == pygame.KEYUP:
@@ -166,30 +169,33 @@ while running:
     for row in range(num):
         for column in range(num):
             curr_sprite = dirt_sprite #catch all is dirt
-            if grid[row][column][1] == 0:
+            if block_type[row][column][1] == 0:
                 curr_sprite = dirt_sprite #dirt
-            if grid[row][column] == [1,1]:
+            if block_type[row][column] == [1,1]:
                 curr_sprite = peas_sprite #green: peas
-            if grid[row][column] == [2,1]:
+            if block_type[row][column] == [2,1]:
                 curr_sprite = carrot_sprite #orange: carrots
-            if grid[row][column] == [3,1]:
+            if block_type[row][column] == [3,1]:
                 curr_sprite = tomato_sprite #red: tomatoes
-            if grid[row][column] == [4,1]:
+            if block_type[row][column] == [4,1]:
                 curr_sprite = potato_sprite #light brown: potatoes
             if timestamp[row][column]:
                 if 5 <= (pygame.time.get_ticks()/1000 - timestamp[row][column]) < 10:
-                    grid[row][column][1] = 2
+                    block_type[row][column][1] = 2
                 elif (pygame.time.get_ticks()/1000 - timestamp[row][column]) >= 10:
-                    grid[row][column][1] = 0
+                    block_type[row][column][1] = 0
                     score-=1
                     timestamp[row][column] = []
-            if grid[row][column][1] == 2:
+            if block_type[row][column][1] == 2:
                 curr_sprite = harvest_sprite #blue: ready to harvest
+
             screen.blit(curr_sprite, [(margin + rect_width) * column + margin,
                                              (margin + rect_height) * row + margin])
+
     screen.blit(main_char, main_char_rect)
 
 #Demand for crop
+
     if (start_time - pygame.time.get_ticks()//1000) % 10 == 0 or frame_count == 0:
         random_crop = random.choice(Crops) #selects a new crop every 10 seconds
         crop_demand = "Gathering Information from Market..."
@@ -209,7 +215,7 @@ while running:
         screen.blit(text_crop, [150, 20]) 
 
     # Use python string formatting to format in leading zeros
-    time_left = start_time - pygame.time.get_ticks()//1000
+    time_left = start_time + start_timestamp - pygame.time.get_ticks()//1000
     output_string = "Time left: {} | Score: {}".format(time_left, score) 
 
     # Blit to the screen
