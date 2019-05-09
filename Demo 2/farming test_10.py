@@ -2,9 +2,10 @@ import pygame, random
 
 pygame.init()
 
-backgroundColor = 100, 42, 42 #background = brown
-running = True
+backgroundColor = 100,42,42 #brown background
+running = True,
 start = True
+tutorial = False
 margin = 2
 rect_width = 50
 rect_height = 50
@@ -12,7 +13,8 @@ num = 10
 width, height = ((rect_width + margin) * num) + margin, ((rect_height + margin) * num) + margin
 screen = pygame.display.set_mode((width, height))
 start_screen = pygame.image.load('start_screen_with_farmer.png')
-main_char = pygame.image.load('character_front.jpg')
+tutorial = pygame.image.load('tutorial.png')
+main_char = pygame.image.load('character_front.png')
 main_char = pygame.transform.scale(main_char, (45, 45)) #smaller than the actual box so you can see the color of the block you're on
 main_char_rect = main_char.get_rect()
 main_char_rect.centerx = margin + (rect_width / 2)
@@ -26,19 +28,17 @@ timestamp = []
 score = 0
 Crops = ['1. Peas', '2. Carrots', '3. Tomatoes', '4. Potatoes'] 
 special_crop = 0 #just an initialization which will be replaced with the real value quickly
-start_time = 30
-frame_count = 0
-
 #crop sprites
-dirt_sprite = pygame.image.load('Dirt.jpeg')
+dirt_sprite = pygame.image.load('dirt.png')
+dirt_sprite = pygame.transform.scale(dirt_sprite, (50, 50))
 potato_sprite = pygame.image.load('potato.png')
 tomato_sprite = pygame.image.load('tomato.png')
 carrot_sprite = pygame.image.load('carrot.png')
 peas_sprite = pygame.image.load('peas.png')
 harvest_sprite = pygame.image.load('harvest.png')
 
-clock = pygame.time.Clock()# Clock initialization
 
+clock = pygame.time.Clock()# Clock initialization
 #fonts
 font_start_game = pygame.font.Font(None, 40)
 font_in_game = pygame.font.Font(None, 25)
@@ -51,24 +51,26 @@ for row in range(num):
         block_type[row].append([0,0])
         timestamp[row].append([])
 
+curr_screen = start_screen
 #start screen
 while start:
     key_in = pygame.key.get_pressed()
-    screen.blit(start_screen, (0,0))
-
-    
     if key_in[pygame.K_ESCAPE]:
         pygame.quit()
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
-            
+    if key_in[pygame.K_RSHIFT]:
+        curr_screen = tutorial
     if key_in[pygame.K_RETURN]:
         start = False
         start_timestamp = pygame.time.get_ticks()//1000
+    screen.blit(curr_screen, (0,0))
     pygame.display.update()
 
+start_time = 30
+frame_count = 0
 # main loop
 while running:
     screen.fill(backgroundColor)
@@ -121,7 +123,7 @@ while running:
         if main_char_rect.top < margin:
             main_char_rect.centery = main_char_rect.centery + margin + rect_height
 
-#block_typeing different veggies
+#planting different veggies
     if key_in[pygame.K_k]: #peas
 
         block_type[row][column] = [1,1]
@@ -147,7 +149,6 @@ while running:
             timestamp[row][column] = pygame.time.get_ticks() / 1000
 
 #harvesting veggies
-
     if key_in[pygame.K_SPACE] and block_type[row][column][1] == 2:
         if block_type[row][column][0] == special_crop:
             score += 1 #receive a bonus point for harvesting the crop in demand
@@ -187,14 +188,11 @@ while running:
                     timestamp[row][column] = []
             if block_type[row][column][1] == 2:
                 curr_sprite = harvest_sprite #ready to harvest
-
             screen.blit(curr_sprite, [(margin + rect_width) * column + margin,
                                              (margin + rect_height) * row + margin])
-
     screen.blit(main_char, main_char_rect)
 
 #Demand for crop
-
     if (start_time - pygame.time.get_ticks()//1000) % 10 == 0 or frame_count == 0:
         random_crop = random.choice(Crops) #selects a new crop every 10 seconds
         crop_demand = "Gathering Information from Market..."
@@ -220,13 +218,13 @@ while running:
     screen.blit(text, [160, 480])
 
     # ALL CODE TO DRAW SHOULD GO ABOVE THIS COMMENT
-    frame_count += 1  
+    frame_count += 1
     pygame.display.update()
 
     while time_left <= 0:
         running == False
         screen.fill((0,0,0))
-        output_string = "Game Over! | Score: {}".format(score)  
+        output_string = "Game Over! | Score: {} \n Left Click to continue".format(score)  
         text = font_end_game.render(output_string, True, (250, 250, 250))
         screen.blit(text, [70, 270])
         if key_in[pygame.K_ESCAPE]:
